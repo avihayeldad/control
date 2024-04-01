@@ -16,7 +16,7 @@ function take_selfi {
     
     if ($lastPicture) {
         # Define the destination folder for the copy
-        $publicPicturesFolder = [System.Environment]::GetFolderPath("Public") + "\Pictures"
+        $publicPicturesFolder = [System.Environment]::GetFolderPath("CommonPictures")
         
         # Copy the last picture to the public pictures folder
         Copy-Item -Path $lastPicture.FullName -Destination $publicPicturesFolder
@@ -35,6 +35,7 @@ function take_selfi {
         }
     }
 }
+
 
                                                                                                                                                                               
 function start_psr {                                                                                                                                                                
