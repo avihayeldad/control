@@ -1,1 +1,5 @@
 *.yasam.co.il
+*.startisrael.co.il
+*.herut.org.il
+*.vision-ltd.co.il
+*.physiothletics.co.il
